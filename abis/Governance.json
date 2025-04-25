@@ -1,0 +1,89 @@
+[
+  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  { "inputs": [], "name": "ExceedsMaxBPS", "type": "error" },
+  { "inputs": [], "name": "InvalidAdminAccess", "type": "error" },
+  { "inputs": [], "name": "InvalidFeeType", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "aumFeeBps",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "perfFeeBps",
+        "type": "uint256"
+      }
+    ],
+    "name": "FeeBpsSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesDue",
+        "type": "uint256"
+      }
+    ],
+    "name": "ProtocolFeePaidInShares",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "aumFeeBps",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_shares", "type": "uint256" },
+      { "internalType": "uint256", "name": "lastPaid", "type": "uint256" },
+      {
+        "internalType": "enum IGovernance.FeeType",
+        "name": "feeType",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "managementFeeBps",
+        "type": "uint256"
+      }
+    ],
+    "name": "calculateProtocolShares",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "perfFeeBps",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "protocolShares",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_aumFeeBps", "type": "uint256" },
+      { "internalType": "uint256", "name": "_perfFeeBps", "type": "uint256" }
+    ],
+    "name": "setProtocolFeeBps",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

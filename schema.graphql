@@ -1,0 +1,325 @@
+interface VaultActivity {
+  id: ID!
+  timestamp: BigInt!
+  activityCounter: Int!
+  activityCategories: [ActivityCategory!]!
+  activityType: ActivityType!
+  transaction: Transaction!
+  vault: Fund!
+}
+
+interface NetworkActivity {
+  id: ID!
+  timestamp: BigInt!
+  activityCounter: Int!
+  activityCategories: [ActivityCategory!]!
+  activityType: ActivityType!
+  transaction: Transaction!
+}
+
+enum ActivityCategory {
+  Network
+  Vault
+}
+
+enum ActivityType {
+  NetworkSettings
+  Trade
+}
+
+enum RedeemType {
+   SingleAsset
+   InKind
+}
+
+enum AssetType {
+  UNKNOWN
+  PRIMITIVE
+  DERIVATIVE
+  USD
+}
+
+enum DerivativeType {
+  Aave
+  Uniswap
+  Beefy
+}
+
+enum EventName {
+  Deposit
+  Withdraw
+  PerfManagementFeePolicySet
+  WithdrawPolicySet
+  FeeClaimed
+  NewFundCreated
+  ProtocolFeePolicySet
+}
+
+enum FundType {
+  Private
+  Public
+}
+
+enum IntegrationName {
+    ADD_LIQUIDITY
+    REMOVE_LIQUIDITY
+    SWAP
+    AAVE_V2_LEND
+    AAVE_V2_WITHDRAW
+    AAVE_V3_LEND
+    AAVE_V3_WITHDRAW
+    BEEFY_DEPOSIT
+    BEEFY_WITHDRAW
+}
+
+type Counter @entity {
+  id: ID!
+  count: Int!
+}
+
+type Transaction @entity {
+  id: ID!
+  from: String!
+  to: Bytes
+  value: BigDecimal!
+  timestamp: BigInt!
+  block: BigInt!
+  gasPrice: BigDecimal!
+  input: String!
+}
+
+type Asset @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  type: AssetType!
+  derivativeType: DerivativeType
+  underlyingAsset: Asset
+}
+
+type InvestorFundCount @entity {
+    id: ID! # user address
+    count: Int!
+}
+
+type Investor @entity {
+    id: ID! # user address + fund
+    user: Bytes!
+    investmentAmount: BigDecimal!
+    sharesOwned: BigDecimal!
+    fees: FundFees
+    highWaterMark: BigDecimal!
+    timestamp: BigInt!
+    totalFundsCount: InvestorFundCount!
+    roi: UserROI!
+    funds: [FundInvestor!]! @derivedFrom(field: "investor")
+}
+
+type DepositLimit @entity {
+    id: ID!    
+    minimumLimit: BigInt!
+    maximumLimit: BigInt!
+}
+
+type Aggregation @entity {
+    id: ID!
+    totalInvestors: BigInt!
+    totalFunds: BigInt!
+}
+
+type FundDetails @entity {
+    id: ID!
+    fmaddress: Bytes!
+    sharesSupply: BigDecimal!
+    fees: FundFees
+    feeSharesEarned: FeesEarned   
+    investorsCount: BigInt!
+    timestamp: BigInt!
+}
+
+type FundTokenAllocation @entity {  
+  id: ID!
+  tokenBalance: BigDecimal!
+  assetBalance: BigDecimal!
+  tokenInfo: Asset!
+  vaultProxy: Bytes!
+}
+
+type Fund @entity {
+    id: ID!
+    fundName: String!
+    denominationAsset: Asset!
+    depositLimit: DepositLimit!
+    fundType: FundType!
+    date: BigInt!
+    owner: Bytes!
+    comptrollerProxy: Bytes!
+    vaultProxy: Bytes!
+    tokenProxy: Bytes!
+    fmdetails:FundDetails
+    assets: [Asset!]!
+    assetsBreakup: [FundTokenAllocation!]!
+    timestamp: BigInt!
+    transaction: Transaction! 
+    eventName: EventName!
+    investors: [FundInvestor!]! @derivedFrom(field: "fund")
+    vaultActivity: [VaultActivity!]! @derivedFrom(field: "vault")
+}
+
+type FundInvestor @entity {
+    id: ID!
+    investor: Investor!
+    fund: Fund!
+}
+
+type UserROI @entity {
+    id: ID!
+    avgSharePrice: BigDecimal!
+    currentSharePrice:BigDecimal!
+    sharesOwned:BigDecimal!
+    returns:BigDecimal!
+    user: Bytes!
+}
+
+type FeeShares @entity {
+    id: ID!
+    sharePrice: BigDecimal!
+    investorAddress: Bytes!
+    perfFees: BigDecimal!
+    manageFees: BigDecimal!
+    protocolFees: BigDecimal!
+}
+
+type FeesEarned @entity {
+    id: ID!
+    totalPerfFeesEarned: BigDecimal!
+    totalManageFeesEarned: BigDecimal!
+    totalFmShares: BigDecimal!
+}
+
+type FundFees implements VaultActivity 
+  @entity {
+    id: ID!
+    vault: Fund!
+    performanceFees: BigDecimal!
+    managementFees: BigDecimal!
+    totalPerformanceFees: BigDecimal!
+    totalManagementFees: BigDecimal!
+    feesDue: BigDecimal!
+    feeInShares: FeeShares
+    eventName: EventName!
+    timestamp: BigInt!   
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type WithdrawalPolicyEvent implements VaultActivity 
+  @entity {
+    id: ID!
+    vault: Fund!
+    eventName: EventName!
+    redemptionFees: BigDecimal!
+    sharesLockPeriod: BigInt!
+    timestamp: BigInt!    
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type SharesBoughtEvent implements VaultActivity
+  @entity {
+    id: ID!
+    vault: Fund!
+    eventName: EventName!
+    depositAsset: Asset!
+    buyerAddr: Bytes!
+    investmentAmount: BigDecimal!
+    sharesIssued: BigDecimal!
+    tokensTransferred: BigDecimal!
+    timestamp: BigInt!
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type SharesRedeemedSingleAssetEvent implements VaultActivity
+  @entity {
+    id: ID!
+    vault: Fund!
+    eventName: EventName!
+    redeemer: Bytes!
+    sharesRedeemed: BigDecimal!
+    tokensWithdrawn: BigDecimal!
+    redeemedAsset: Asset
+    timestamp: BigInt!
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type SharesWithdrawnEvent implements VaultActivity
+  @entity {
+    id: ID!
+    vault: Fund!
+    eventName: EventName!
+    redeemer: Bytes!
+    redeemType: RedeemType!
+    sharesRedeemed: BigDecimal!
+    tokensWithdrawn: BigDecimal!
+    redeemedAsset: Asset
+    feeInShares: FeeShares
+    timestamp: BigInt!
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type IntegrationsEventData implements VaultActivity 
+  @entity {
+    id: ID!
+    vault: Fund!
+    integrationEventName: IntegrationName!
+    selector: Bytes!
+    comptrollerProxy: Bytes!
+    incomingAsset: [Asset!]!
+    incomingAssetBalance: [String!]!
+    outgoingAsset: [Asset!]!
+    outgoingAssetBalance: [String!]!
+    timestamp: BigInt!  
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type FundProtocolFeesSet implements NetworkActivity 
+  @entity {
+    id: ID!   
+    protocolPerfFees: BigDecimal!
+    protocolAumFees: BigDecimal!
+    eventName: EventName!
+    timestamp: BigInt!
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}
+
+type ProtocolFeesPaid implements NetworkActivity 
+  @entity {
+    id: ID!   
+    protocolFeeShares: BigDecimal!
+    eventName: EventName!
+    timestamp: BigInt!
+    activityCounter: Int!
+    activityCategories: [ActivityCategory!]!
+    activityType: ActivityType!
+    transaction: Transaction!
+}

@@ -1,0 +1,178 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Deployer
+    network: arbitrum-one	
+    source:
+      address: "0xdD354891370a1728c62D5Ca921edDFfb858aadDC"
+      abi: Deployer
+      startBlock: 271030125
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Vault
+        - Asset
+      abis:
+        - name: Deployer
+          file: ./abis/Deployer.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: NewFundCreated(indexed address,indexed address,indexed
+            address,address,string,bool,uint256)
+          handler: handleNewVaultDeployed
+      file: ./src/mappings/deployer.ts
+  - kind: ethereum
+    name: IntegrationManager
+    network: arbitrum-one	
+    source:
+      address: "0x55d1EA982B5A88128FF690a97bA44a26b40c34a7"
+      abi: IntegrationManager
+      startBlock: 271030203
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/integrationmanager.ts
+      entities:
+        - ExternalAdapterPairAdded
+        - IntegrationCalledForVault
+        - ProxyPairAdded
+      abis:
+        - name: IntegrationManager
+          file: ./abis/IntegrationManager.json
+        - name: ComptrollerLogic
+          file: ./abis/ComptrollerLogic.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: ExternalAdapterPairAdded(indexed address,indexed address)
+          handler: handleExternalAdapterPairAdded
+        - event: IntegrationCalledForVault(indexed address,indexed address,indexed
+            bytes4,address[],uint256[],address[],uint256[])
+          handler: handleIntegrationCalledForVault
+  - kind: ethereum
+    name: Dispatcher
+    network: arbitrum-one	
+    source:
+      address: "0x3107F63Ea38Da9606f8DA1Ac2553A52f4D8EDE4e"
+      abi: Dispatcher
+      startBlock: 271030119
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Vault
+      abis:
+        - name: Dispatcher
+          file: ./abis/Dispatcher.json
+      eventHandlers:
+        - event: NewVaultDeployed(indexed address,indexed address,address,address,address)
+          handler: handleDispatcherNewVaultDeployed
+      file: ./src/mappings/deployer.ts
+  - kind: ethereum
+    name: Governance
+    network: arbitrum-one	
+    source:
+      address: "0x3b5270DbfEDF45fcE430c2BadeB7E5012Da3d734"
+      abi: Governance
+      startBlock: 271030112
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - FeeBpsSet
+        - ProtocolFeePaidInShares
+      abis:
+        - name: Governance
+          file: ./abis/Governance.json
+      eventHandlers:
+        - event: FeeBpsSet(uint256,uint256)
+          handler: handleFeeBpsSet
+        - event: ProtocolFeePaidInShares(uint256)
+          handler: handleProtocolFeePaidInShares
+      file: ./src/mappings/governance.ts
+templates:
+  - name: ComptrollerLogic
+    kind: ethereum/contract
+    network: arbitrum-one	
+    source:
+      abi: ComptrollerLogic
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/comptroller.ts
+      entities:
+        - User
+        - UserFund
+        - Asset
+      abis:
+        - name: ComptrollerLogic
+          file: ./abis/ComptrollerLogic.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: UserToken
+          file: ./abis/UserToken.json
+      eventHandlers:
+        - event: SharesBought(indexed
+            address,uint256,uint256,uint256,address,uint256,uint256,uint256,uint256)
+          handler: handleSharesBought
+        - event: SharesRedeemedSingleAsset(indexed uint256,indexed address,uint256,address)
+          handler: handleSharesRedeemedSingleAsset
+        - event: SharesWithdrawn(indexed
+            address,uint8,uint256,uint256,address,uint256,uint256,uint256,uint256)
+          handler: handleSharesWithdraw
+        - event: FeePolicySet(uint256,uint256)
+          handler: handleFeePolicySet
+        - event: FeeClaimed(uint256,uint256,uint256,address,uint256,uint256,uint256)
+          handler: handleFeeClaimed
+        - event: WithdrawPolicySet(uint256,uint256)
+          handler: handleWithdrawalPolicyEvent
+  - name: Vault
+    kind: ethereum/contract
+    network: arbitrum-one	
+    source:
+      abi: Vault
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/vault.ts
+      entities:
+        - Vault
+        - Asset
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: MaticReceived(indexed address,uint256)
+          handler: handleMaticReceived
+        - event: SharesBurned(indexed address,uint256)
+          handler: handleSharesBurned
+        - event: SharesMinted(indexed address,uint256)
+          handler: handleSharesMinted
+        - event: DepositAssetAdded(address)
+          handler: handleNewAssetAdded
+        - event: AssetDeposited(indexed address,indexed address,uint256)
+          handler: handleAssetDeposited
+        - event: AssetTransferred(indexed address,indexed address,uint256)
+          handler: handleAssetTransferred
+        - event: DepositAssetAddedBulk(address[],address[])
+          handler: handleDepositAssetAddedBulk
+        - event: DepositAssetRemoved(address)
+          handler: handleDepositAssetRemoved
+        - event: DepositAssetRemovedBulk(address[])
+          handler: handleDepositAssetRemovedBulk
+        - event: OwnerSet(address,address)
+          handler: handleOwnerSet
+        - event: VaultLibrarySet(address,address)
+          handler: handleVaultLibrarySet

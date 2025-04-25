@@ -1,0 +1,16 @@
+{
+  "arbitrum-one": {
+    "Dispatcher": {
+      "address": "0x3107F63Ea38Da9606f8DA1Ac2553A52f4D8EDE4e"
+    },
+    "Deployer": {
+      "address": "0xdD354891370a1728c62D5Ca921edDFfb858aadDC"
+    },
+    "IntegrationManager":{
+      "address":"0x55d1EA982B5A88128FF690a97bA44a26b40c34a7"
+    },
+    "Governance": {
+      "address": "0x3b5270DbfEDF45fcE430c2BadeB7E5012Da3d734"
+    }
+  }
+}
