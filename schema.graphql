@@ -72,12 +72,12 @@ enum IntegrationName {
     BEEFY_WITHDRAW
 }
 
-type Counter @entity {
+type Counter @entity(immutable: true) {
   id: ID!
   count: Int!
 }
 
-type Transaction @entity {
+type Transaction @entity(immutable: true) {
   id: ID!
   from: String!
   to: Bytes
@@ -88,7 +88,7 @@ type Transaction @entity {
   input: String!
 }
 
-type Asset @entity {
+type Asset @entity(immutable: true) {
   id: ID!
   name: String!
   symbol: String!
@@ -98,12 +98,12 @@ type Asset @entity {
   underlyingAsset: Asset
 }
 
-type InvestorFundCount @entity {
+type InvestorFundCount @entity(immutable: true) {
     id: ID! # user address
     count: Int!
 }
 
-type Investor @entity {
+type Investor @entity(immutable: true) {
     id: ID! # user address + fund
     user: Bytes!
     investmentAmount: BigDecimal!
@@ -116,19 +116,19 @@ type Investor @entity {
     funds: [FundInvestor!]! @derivedFrom(field: "investor")
 }
 
-type DepositLimit @entity {
+type DepositLimit @entity(immutable: true) {
     id: ID!    
     minimumLimit: BigInt!
     maximumLimit: BigInt!
 }
 
-type Aggregation @entity {
+type Aggregation @entity(immutable: true) {
     id: ID!
     totalInvestors: BigInt!
     totalFunds: BigInt!
 }
 
-type FundDetails @entity {
+type FundDetails @entity(immutable: true) {
     id: ID!
     fmaddress: Bytes!
     sharesSupply: BigDecimal!
@@ -138,7 +138,7 @@ type FundDetails @entity {
     timestamp: BigInt!
 }
 
-type FundTokenAllocation @entity {  
+type FundTokenAllocation @entity(immutable: true) {  
   id: ID!
   tokenBalance: BigDecimal!
   assetBalance: BigDecimal!
@@ -146,7 +146,7 @@ type FundTokenAllocation @entity {
   vaultProxy: Bytes!
 }
 
-type Fund @entity {
+type Fund @entity(immutable: true) {
     id: ID!
     fundName: String!
     denominationAsset: Asset!
@@ -167,13 +167,13 @@ type Fund @entity {
     vaultActivity: [VaultActivity!]! @derivedFrom(field: "vault")
 }
 
-type FundInvestor @entity {
+type FundInvestor @entity(immutable: true) {
     id: ID!
     investor: Investor!
     fund: Fund!
 }
 
-type UserROI @entity {
+type UserROI @entity(immutable: true) {
     id: ID!
     avgSharePrice: BigDecimal!
     currentSharePrice:BigDecimal!
@@ -182,7 +182,7 @@ type UserROI @entity {
     user: Bytes!
 }
 
-type FeeShares @entity {
+type FeeShares @entity(immutable: true) {
     id: ID!
     sharePrice: BigDecimal!
     investorAddress: Bytes!
@@ -191,7 +191,7 @@ type FeeShares @entity {
     protocolFees: BigDecimal!
 }
 
-type FeesEarned @entity {
+type FeesEarned @entity(immutable: true) {
     id: ID!
     totalPerfFeesEarned: BigDecimal!
     totalManageFeesEarned: BigDecimal!
@@ -199,7 +199,7 @@ type FeesEarned @entity {
 }
 
 type FundFees implements VaultActivity 
-  @entity {
+  @entity(immutable: true) {
     id: ID!
     vault: Fund!
     performanceFees: BigDecimal!
@@ -217,7 +217,7 @@ type FundFees implements VaultActivity
 }
 
 type WithdrawalPolicyEvent implements VaultActivity 
-  @entity {
+  @entity(immutable: true) {
     id: ID!
     vault: Fund!
     eventName: EventName!
@@ -231,7 +231,7 @@ type WithdrawalPolicyEvent implements VaultActivity
 }
 
 type SharesBoughtEvent implements VaultActivity
-  @entity {
+  @entity(immutable: true) {
     id: ID!
     vault: Fund!
     eventName: EventName!
@@ -248,7 +248,7 @@ type SharesBoughtEvent implements VaultActivity
 }
 
 type SharesRedeemedSingleAssetEvent implements VaultActivity
-  @entity {
+  @entity(immutable: true) {
     id: ID!
     vault: Fund!
     eventName: EventName!
@@ -264,7 +264,7 @@ type SharesRedeemedSingleAssetEvent implements VaultActivity
 }
 
 type SharesWithdrawnEvent implements VaultActivity
-  @entity {
+  @entity(immutable: true) {
     id: ID!
     vault: Fund!
     eventName: EventName!
@@ -282,7 +282,7 @@ type SharesWithdrawnEvent implements VaultActivity
 }
 
 type IntegrationsEventData implements VaultActivity 
-  @entity {
+  @entity(immutable: true) {
     id: ID!
     vault: Fund!
     integrationEventName: IntegrationName!
@@ -300,7 +300,7 @@ type IntegrationsEventData implements VaultActivity
 }
 
 type FundProtocolFeesSet implements NetworkActivity 
-  @entity {
+  @entity(immutable: true) {
     id: ID!   
     protocolPerfFees: BigDecimal!
     protocolAumFees: BigDecimal!
@@ -313,7 +313,7 @@ type FundProtocolFeesSet implements NetworkActivity
 }
 
 type ProtocolFeesPaid implements NetworkActivity 
-  @entity {
+  @entity(immutable: true) {
     id: ID!   
     protocolFeeShares: BigDecimal!
     eventName: EventName!

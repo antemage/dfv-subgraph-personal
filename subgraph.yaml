@@ -2,20 +2,25 @@ specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum
+  - kind: ethereum/contract
     name: Deployer
     network: arbitrum-one	
     source:
-      address: "0xdD354891370a1728c62D5Ca921edDFfb858aadDC"
+      address: "0x140cF4F2FBD16ee9Cdc155ec3F2D0E0d4EC9200C"
       abi: Deployer
-      startBlock: 271030125
+      startBlock: 333930519
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
+        - Fund
+        - Aggregation
+        - DepositLimit
         - Vault
         - Asset
+
+        
       abis:
         - name: Deployer
           file: ./abis/Deployer.json
@@ -26,13 +31,13 @@ dataSources:
             address,address,string,bool,uint256)
           handler: handleNewVaultDeployed
       file: ./src/mappings/deployer.ts
-  - kind: ethereum
+  - kind: ethereum/contract
     name: IntegrationManager
     network: arbitrum-one	
     source:
-      address: "0x55d1EA982B5A88128FF690a97bA44a26b40c34a7"
+      address: "0x7A0C2b97fd6ffDb5e6d61a43c8619e29B0CC3030"
       abi: IntegrationManager
-      startBlock: 271030203
+      startBlock: 333932745
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -55,13 +60,13 @@ dataSources:
         - event: IntegrationCalledForVault(indexed address,indexed address,indexed
             bytes4,address[],uint256[],address[],uint256[])
           handler: handleIntegrationCalledForVault
-  - kind: ethereum
+  - kind: ethereum/contract
     name: Dispatcher
     network: arbitrum-one	
     source:
-      address: "0x3107F63Ea38Da9606f8DA1Ac2553A52f4D8EDE4e"
+      address: "0x0576F79d932c3Ecd3964fC841E6B535B33c24B59"
       abi: Dispatcher
-      startBlock: 271030119
+      startBlock: 	333930488
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -75,13 +80,13 @@ dataSources:
         - event: NewVaultDeployed(indexed address,indexed address,address,address,address)
           handler: handleDispatcherNewVaultDeployed
       file: ./src/mappings/deployer.ts
-  - kind: ethereum
+  - kind: ethereum/contract
     name: Governance
     network: arbitrum-one	
     source:
-      address: "0x3b5270DbfEDF45fcE430c2BadeB7E5012Da3d734"
+      address: "0x42C69f3D12aaD89328e4f864E66937b148147d01"
       abi: Governance
-      startBlock: 271030112
+      startBlock: 333930440
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

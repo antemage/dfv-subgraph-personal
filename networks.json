@@ -1,16 +1,16 @@
 {
   "arbitrum-one": {
     "Dispatcher": {
-      "address": "0x3107F63Ea38Da9606f8DA1Ac2553A52f4D8EDE4e"
+      "address": "0x0576F79d932c3Ecd3964fC841E6B535B33c24B59"
     },
     "Deployer": {
-      "address": "0xdD354891370a1728c62D5Ca921edDFfb858aadDC"
+      "address": "0x140cF4F2FBD16ee9Cdc155ec3F2D0E0d4EC9200C"
     },
     "IntegrationManager":{
-      "address":"0x55d1EA982B5A88128FF690a97bA44a26b40c34a7"
+      "address":"0x7A0C2b97fd6ffDb5e6d61a43c8619e29B0CC3030"
     },
     "Governance": {
-      "address": "0x3b5270DbfEDF45fcE430c2BadeB7E5012Da3d734"
+      "address": "0x42C69f3D12aaD89328e4f864E66937b148147d01"
     }
   }
 }
